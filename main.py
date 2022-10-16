@@ -80,11 +80,11 @@ def main(argc:int, argv:list)->int:
                     x += 1
             k = int(time() - token[message.from_user.id][1]) 
             seconds = k % 60
-            k -= k % 60
+            k //= 60
             minutes = k % 60
-            k -= k % 60
+            k //= 60
             hours = k % 60
-            timeAns = str(hours) + ":" + str(minutes) + ":" + str(seconds) 
+            timeAns = "{:02d}:{:02d}:{:02d}".format(hours, minutes, seconds)
         
             ans = "Вы решили " + str(x) + "/" + str(len(token[message.from_user.id][0]))
             ans += " задач решено верно. Твое время: " + timeAns + ". Попробуй снова для лучшего результата!!"
