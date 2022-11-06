@@ -22,33 +22,30 @@ def main(argc:int, argv:list)->int:
 
     @bot.message_handler(content_types=["text"])
     def massage(message)->None:
+
+        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        btn1 = types.KeyboardButton("3 задачи")
+        btn2 = types.KeyboardButton("6 задач")
+        btn3 = types.KeyboardButton("9 задач")
+        markup.add(btn1, btn2).row(btn3)
+        
         print("Classic mode: ", asctime(localtime(time())), 
                                 message.from_user.first_name, 
                                 message.from_user.id)
         
         if ( len(message.text) > 1860 ) :
-            bot.send_message(message.from_user.id, "Текст слишком большой")
+            bot.send_message(message.from_user.id, "Текст слишком большой", reply_markup = markup)
             return None
 
         elif ( message.text in tegs) :
-            bot.send_message(message.from_user.id, tegs[message.text], parse_mode = "html")
+            bot.send_message(message.from_user.id, tegs[message.text], parse_mode = "html", reply_markup = markup)
             return None
 
-        elif ( message.text[:5] == "/test" and not(message.from_user.id in token )) :         
-            sizeT = size_test(message.text)
-            if ( sizeT == None ) :
-                ans = "Числа пиши правилнее я не могу тебя понять если забыл то <b>/help</b> в помощь"
-                bot.send_message(message.from_user.id, ans,  parse_mode = "html")
-                return None
-
-            elif ( sizeT > 10 or sizeT < 0 ) :
-                bot.send_message(message.from_user.id, "Сток тестов не могу сгенерить прости :)")
-                return None
-            
+        elif ( message.text == "3 задачи" and not (message.from_user.id in token) ) :
             j = 1
             str_ans = ""
             other = []
-            for i in generator(sizeT):
+            for i in generator(3):
                 str_ans += str(j) + ".  " +  i[0] + "\n"
                 other.append(i[1])
                 j += 1
@@ -57,18 +54,40 @@ def main(argc:int, argv:list)->int:
             token[message.from_user.id] = other, time()
             return None
 
-        elif ( message.text[:5] == "/test" and message.from_user.id in token ) :     
-            ans = "У важаемый у тебя еще открыт тест не забывай как ток решишь и скинешь ответ мне и я придумаю новый тест!!\
-                   Завершите так сказть свой открытый гельштайль"
-            bot.send_message(message.from_user.id, ans)
+        elif ( message.text == "6 задач" and not (message.from_user.id in token) ) :
+            j = 1
+            str_ans = ""
+            other = []
+            for i in generator(6):
+                str_ans += str(j) + ".  " +  i[0] + "\n"
+                other.append(i[1])
+                j += 1
+                
+            bot.send_message(message.from_user.id, str_ans)
+            token[message.from_user.id] = other, time()
             return None
 
+        elif ( message.text == "9 задач" and not (message.from_user.id in token) ) :
+            j = 1
+            str_ans = ""
+            other = []
+            for i in generator(9):
+                str_ans += str(j) + ".  " +  i[0] + "\n"
+                other.append(i[1])
+                j += 1
+                
+            bot.send_message(message.from_user.id, str_ans)
+            token[message.from_user.id] = other, time()
+            return None
+
+
+        
         else:
             if ( not (message.from_user.id in token) ) :
-                ans = "Я не понимаю что ты хочешь!!"
-                bot.send_message(message.from_user.id, ans)
+                ans = "Я не понимаю что ты хочешь!! Выбери из меню что ты хочешь"
+                bot.send_message(message.from_user.id, ans, reply_markup = markup)
                 return None
-            other = ans_test(message.text, len(token[message.from_user.id]))
+            other = ans_test(message.text, len(token[message.from_user.id]) + 1)
             if ( other == None ) :
                 ans = "Я не понимаю что ты хочешь!!"
                 bot.send_message(message.from_user.id, ans)
@@ -76,6 +95,7 @@ def main(argc:int, argv:list)->int:
 
             x = 0
             for i in range(len(token[message.from_user.id][0])):
+             
                 if ( other[i] == token[message.from_user.id][0][i] ):
                     x += 1
             k = int(time() - token[message.from_user.id][1]) 
@@ -89,7 +109,7 @@ def main(argc:int, argv:list)->int:
             ans = "Вы решили " + str(x) + "/" + str(len(token[message.from_user.id][0]))
             ans += " задач решено верно. Твое время: " + timeAns + ". Попробуй снова для лучшего результата!!"
             del token[message.from_user.id]
-            bot.send_message(message.from_user.id, ans)
+            bot.send_message(message.from_user.id, ans, reply_markup = markup)
 
 
 
@@ -100,6 +120,5 @@ def main(argc:int, argv:list)->int:
     bot.polling(none_stop = True, timeout = 120)
 
 
-
-main(len(sys.argv), sys.argv)
-
+if ( __name__ == "__main__" ) :
+    exit(main(len(sys.argv), sys.argv))
