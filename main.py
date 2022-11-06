@@ -84,12 +84,13 @@ def main(argc:int, argv:list)->int:
         
         else:
             if ( not (message.from_user.id in token) ) :
-                ans = "Я не понимаю что ты хочешь!! Выбери из меню что ты хочешь"
+                ans = "Я не понимаю что ты хочешь!! Выбери из меню что ты хочешь!!"
                 bot.send_message(message.from_user.id, ans, reply_markup = markup)
                 return None
             other = ans_test(message.text, len(token[message.from_user.id]) + 1)
             if ( other == None ) :
-                ans = "Я не понимаю что ты хочешь!!"
+                ans = """Я не понимаю что ты хочешь!! Если ты хочешь
+                новую задачу то реши сначало страую"""
                 bot.send_message(message.from_user.id, ans)
                 return None
 
